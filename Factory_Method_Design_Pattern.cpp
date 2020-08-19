@@ -1,4 +1,4 @@
-// Factory_Method_Design_Pattern.cpp 
+// Factory_Method(Virtual_Constructor)_Design_Pattern.cpp 
 
 #include <iostream>
 #include <string>
@@ -59,9 +59,7 @@ class Application
 public:
     virtual ~Application() {}
 
-    virtual Document* createWordDocument() = 0;
-    virtual Document* createExcelDocument() = 0;
-
+    virtual Document* createDocument() = 0;
     virtual void removeDocument(Document* doc) = 0;
 
    
@@ -73,43 +71,60 @@ public:
  * one or more concrete products ie. it is class that has
  * the knowledge of how to create the products
  */
-class MyApplication : public Application
+class WordApplication : public Application
 {
 public:
-    ~MyApplication() {}
+    ~WordApplication() {}
     
-    Document* createWordDocument()
+    Document* createDocument()
     {
         return new WordDocument();
     }
 
-    Document* createExcelDocument()
+    void removeDocument(Document* doc)
+    {
+        std::cout << "Word Document is removed" << std::endl;
+        delete doc;
+    }
+    
+};
+
+class ExcelApplication : public Application
+{
+public:
+    ~ExcelApplication() {}
+
+  
+    Document* createDocument()
     {
         return new ExcelDocument();
     }
 
     void removeDocument(Document* doc)
     {
-        std::cout << "Document is removed" << std::endl;
+        std::cout << "Excel Document is removed" << std::endl;
         delete doc;
     }
-    
+
 };
 
 
 int main()
 {
-    Application* application = new MyApplication();
+    Application* application1 = new WordApplication();
 
-    Document* doc1 = application->createWordDocument();
+    Document* doc1 = application1->createDocument();
     std::cout << "Document: " << doc1->open() << std::endl;
-    application->removeDocument(doc1);
+    application1->removeDocument(doc1);
 
-    Document* doc2 = application->createExcelDocument();
+    Application* application2 = new ExcelApplication();
+
+    Document* doc2 = application2->createDocument();
     std::cout << "Document: " << doc2->open() << std::endl;
-    application->removeDocument(doc2);
+    application2->removeDocument(doc2);
 
     
-    delete application;
+    delete application1;
+    delete application2;
     return 0;
 }
